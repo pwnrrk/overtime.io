@@ -1,5 +1,6 @@
 import { Engine } from "../types";
 import { Player } from "./Player";
+import background from "../assets/2 Locations/Backgrounds/1.png";
 
 export class Game extends Engine {
   canvas: HTMLCanvasElement;
@@ -10,18 +11,29 @@ export class Game extends Engine {
   static gameFrame: number = 0;
   static staggerFrames: number = 5;
 
+  levelImage: HTMLImageElement = new Image();
+  levelWidth = 64;
+  levelHeight = 64;
+  levelPattern: CanvasPattern | null = null;
+
   constructor(canvas: HTMLCanvasElement) {
     super();
     this.canvas = canvas;
     this.context = canvas.getContext("2d") as CanvasRenderingContext2D;
     this.id = Math.round(Date.now() * Math.random()).toString(16);
     this.player = new Player();
+    this.levelImage.src = background;
+    this.levelImage.onload = () => {
+      this.levelPattern = this.context.createPattern(
+        this.levelImage,
+        "repeat"
+      ) as CanvasPattern;
+    };
   }
 
   init(): void {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
-    this.context.fillStyle = "white";
     this.player.init({
       position: {
         x: 0,
@@ -38,6 +50,12 @@ export class Game extends Engine {
 
   update(): void {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.context.beginPath();
+    if (this.levelPattern) {
+      this.context.rect(0, 0, this.canvas.width, this.canvas.height);
+      this.context.fillStyle = this.levelPattern;
+      this.context.fill();
+    }
     this.player.update(this.context);
     Game.gameFrame++;
   }

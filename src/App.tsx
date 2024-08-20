@@ -14,6 +14,9 @@ export default function App() {
   return (
     <>
       <canvas ref={canvasRef} id="game" className="main" />
+      <div id="ui-overlay">
+        <button type="button">Start</button>
+      </div>
     </>
   );
 }
