@@ -1,16 +1,20 @@
 import { Input } from "../misc/Input";
-import { Game } from "./Game";
+import { Game } from "../engines/Game";
 import { State } from "../states/State";
 import { Running } from "../states/player/Running";
 import { Falling } from "../states/player/Falling";
 import { Idling } from "../states/player/Idling";
 import { Jumping } from "../states/player/Jumping";
 import { Boundaries } from "../misc/Boundaries";
-import { Engine } from "./Engine";
+import { GameObject } from "./GameObject";
+import { LayerTypes } from "../layers/Layer";
 
-export class Player extends Engine {
-  static width: number = 32;
-  static height: number = 32;
+export class Player extends GameObject {
+  id: string = "Player1";
+  name = "Player";
+  turnOnCollision: boolean = true;
+  width: number = 32;
+  height: number = 32;
   /**
    * Position X
    */
@@ -43,6 +47,8 @@ export class Player extends Engine {
     new Falling(this),
   ];
   currentState: State;
+  groundEdgeL: number;
+  groundEdgeR: number;
 
   constructor(options: {
     position: { x: number; y: number };
@@ -51,10 +57,12 @@ export class Player extends Engine {
     super();
     this.model = new Image();
     this.boundaries = options.boundaries;
-    this.boundaries.right -= Player.width;
-    this.boundaries.bottom -= Player.height;
+    this.boundaries.right -= this.width;
+    this.boundaries.bottom -= this.height;
+    this.groundEdgeL = this.boundaries.left;
+    this.groundEdgeR = this.boundaries.right;
     this.x = options.position.x;
-    this.y = options.position.y - Player.height;
+    this.y = options.position.y - this.height;
     this.currentState = this.states[0];
     this.currentState.enter();
   }
@@ -73,12 +81,12 @@ export class Player extends Engine {
     this.x += this.speed;
     if (
       this.x < this.boundaries.left &&
-      this.y > this.boundaries.top - Player.height * 3
+      this.y > this.boundaries.top - this.height * 3
     )
       this.x = this.boundaries.left;
     if (
       this.x > this.boundaries.right &&
-      this.y > this.boundaries.top - Player.height * 3
+      this.y > this.boundaries.top - this.height * 3
     )
       this.x = this.boundaries.right;
     this.y += this.vy;
@@ -90,25 +98,27 @@ export class Player extends Engine {
       else this.frameX = 0;
     }
     if (this.y > this.boundaries.bottom) this.y = this.boundaries.bottom;
+    if (this.x < this.groundEdgeL || this.x > this.groundEdgeR)
+      this.boundaries.bottom = Game.canvas.height;
     this.draw(context);
   }
 
   draw(context: CanvasRenderingContext2D): void {
     context.drawImage(
       this.model,
-      this.frameX * Player.width,
+      this.frameX * this.width,
       0,
-      Player.width,
-      Player.height,
+      this.width,
+      this.height,
       this.x,
       this.y,
-      Player.width,
-      Player.height
+      this.width,
+      this.height
     );
   }
 
   onGround() {
-    return this.y >= this.boundaries.bottom;
+    return this.y >= this.boundaries.bottom ;
   }
 
   animateEnd() {
@@ -118,5 +128,22 @@ export class Player extends Engine {
   setState(state: number) {
     this.currentState = this.states[state];
     this.currentState.enter();
+  }
+
+  onCollision(target: GameObject): void {
+    if (target.name === LayerTypes.GROUND) {
+      if (
+        target.y <= this.y &&
+        target.y + target.height >= this.y + this.height
+      ) {
+        if (target.x >= this.x) this.boundaries.right = this.x;
+        else if (target.x <= this.x)
+          this.boundaries.left = target.x + target.width;
+      } else if (this.y <= target.y + target.height) {
+        this.boundaries.bottom = target.y - this.height;
+        this.groundEdgeL = target.x;
+        this.groundEdgeR = target.x + target.width;
+      }
+    }
   }
 }

@@ -1,6 +1,6 @@
-import { Player } from "../../engines/Player";
 import playerFall from "../../../assets/1 Main Characters/1/Fall.png";
 import playerFallBackward from "../../../assets/1 Main Characters/1/Fall_Backward.png";
+import { Player } from "../../objects/Player";
 import { State, states } from "../State";
 
 export class Falling extends State {

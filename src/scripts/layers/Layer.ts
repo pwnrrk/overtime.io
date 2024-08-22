@@ -1,10 +1,10 @@
-import { Engine } from "../engines/Engine";
+import { GameObject } from "../objects/GameObject";
 
-export abstract class Layer extends Engine {
+export enum LayerTypes {
+  GROUND = "Ground",
+}
+
+export abstract class Layer extends GameObject {
   abstract image: HTMLImageElement;
-  abstract width: number;
-  abstract height: number;
-  abstract x: number;
-  abstract y: number;
   abstract pattern: CanvasPattern | null;
 }

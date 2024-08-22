@@ -1,7 +1,7 @@
-import { Player } from "../../engines/Player";
 import { State, states } from "../State";
 import playerIdle from "../../../assets/1 Main Characters/1/Idle.png";
 import playerIdleBackward from "../../../assets/1 Main Characters/1/Idle_Backward.png";
+import { Player } from "../../objects/Player";
 
 export class Idling extends State {
   player: Player;

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Game } from "./scripts/engines/Game";
 import { Input } from "./scripts/misc/Input";
+import { Collision } from "./scripts/misc/Collision";
 
 export function useEngine() {
   const [isRunning, setRunning] = useState(false);
@@ -33,5 +34,11 @@ export function useEngine() {
   return {
     start,
     isRunning,
+    toggleCollisionBox() {
+      Collision.turnOnBox = !Collision.turnOnBox;
+    },
+    respawn() {
+      Game.respawn();
+    },
   };
 }

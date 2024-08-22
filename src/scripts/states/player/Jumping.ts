@@ -1,10 +1,12 @@
-import { Player } from "../../engines/Player";
 import { State, states } from "../State";
 import playerJump from "../../../assets/1 Main Characters/1/Jump.png";
 import playerJumpBackward from "../../../assets/1 Main Characters/1/Jump_Backward.png";
+import { Player } from "../../objects/Player";
+import { Game } from "../../engines/Game";
 
 export class Jumping extends State {
   player: Player;
+  jumpPower: number = 20;
   constructor(player: Player) {
     super("JUMPING");
     this.player = player;
@@ -13,7 +15,10 @@ export class Jumping extends State {
     this.player.frameX = 0;
     this.player.maxFrame = -1;
     if (this.player.onGround()) {
-      this.player.vy -= 20;
+      this.player.vy -= this.jumpPower;
+      this.player.boundaries.right = Game.canvas.width - this.player.width;
+      this.player.boundaries.bottom = Game.canvas.height - this.player.height;
+      this.player.boundaries.left = 0;
     }
   }
   handleInput(): void {

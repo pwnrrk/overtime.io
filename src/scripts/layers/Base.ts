@@ -1,7 +1,11 @@
 import { Layer } from "./Layer";
 import background from "../../assets/2 Locations/Backgrounds/1.png";
+import { getId } from "../misc/Id";
 
 export class Base extends Layer {
+  id: string;
+  name = "Background";
+  turnOnCollision: boolean = false;
   pattern: CanvasPattern | null = null;
   image: HTMLImageElement = new Image();
   width: number = 0;
@@ -24,6 +28,7 @@ export class Base extends Layer {
     };
     this.width = width;
     this.height = height;
+    this.id = getId("Background");
   }
 
   update(context: CanvasRenderingContext2D): void {
@@ -36,4 +41,6 @@ export class Base extends Layer {
       context.fillRect(0, 0, this.width, this.height);
     }
   }
+
+  onCollision(): void {}
 }

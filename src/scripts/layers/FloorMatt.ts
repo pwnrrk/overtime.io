@@ -1,12 +1,11 @@
 import { Layer } from "./Layer";
-import Tile from "../../assets/2 Locations/Tiles/Tile_63.png";
-import { Game } from "../engines/Game";
+import Tile from "../../assets/2 Locations/Tiles/Tile_114.png";
 import { getId } from "../misc/Id";
 
-export class Ground extends Layer {
+export class FloorMatt extends Layer {
   id: string;
-  name = "Ground";
-  turnOnCollision: boolean = true;
+  name = "FloorMatt";
+  turnOnCollision: boolean = false;
   pattern: CanvasPattern | null = null;
   image: HTMLImageElement;
   width: number = 16;
@@ -34,8 +33,7 @@ export class Ground extends Layer {
         "repeat"
       ) as CanvasPattern;
     };
-    Game.collision.register(this);
-    this.id = getId("Ground");
+    this.id = getId("FloorMatt");
   }
 
   update(context: CanvasRenderingContext2D): void {

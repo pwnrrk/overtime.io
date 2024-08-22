@@ -1,7 +1,7 @@
-import { Player } from "../../engines/Player";
 import { State, states } from "../State";
 import playerRun from "../../../assets/1 Main Characters/1/Run.png";
 import playerRunBackward from "../../../assets/1 Main Characters/1/Run_Backward.png";
+import { Player } from "../../objects/Player";
 
 export class Running extends State {
   player: Player;
