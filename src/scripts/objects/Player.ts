@@ -1,6 +1,6 @@
 import { Input } from "../misc/Input";
 import { Game } from "../engines/Game";
-import { State } from "../states/State";
+import { State, states } from "../states/State";
 import { Running } from "../states/player/Running";
 import { Falling } from "../states/player/Falling";
 import { Idling } from "../states/player/Idling";
@@ -89,6 +89,9 @@ export class Player extends GameObject {
       this.y > this.boundaries.top - this.height * 3
     )
       this.x = this.boundaries.right;
+    if (this.y <= this.boundaries.top) {
+      this.y = this.boundaries.top;
+    }
     this.y += this.vy;
     if (!this.onGround()) {
       this.vy += this.weight;
@@ -113,12 +116,12 @@ export class Player extends GameObject {
       this.x,
       this.y,
       this.width,
-      this.height
+      this.height,
     );
   }
 
   onGround() {
-    return this.y >= this.boundaries.bottom ;
+    return this.y >= this.boundaries.bottom;
   }
 
   animateEnd() {
@@ -132,14 +135,21 @@ export class Player extends GameObject {
 
   onCollision(target: GameObject): void {
     if (target.name === LayerTypes.GROUND) {
-      if (
-        target.y <= this.y &&
-        target.y + target.height >= this.y + this.height
-      ) {
-        if (target.x >= this.x) this.boundaries.right = this.x;
-        else if (target.x <= this.x)
+      if (this.currentState.state === "JUMPING") this.setState(states.FALLING);
+      if (target.y <= this.y) {
+        if (
+          target.x <= this.x &&
+          target.x + target.width >= this.x + this.width
+        )
+          this.boundaries.top = target.y + target.height; // Top
+        else if (target.x >= this.x)
+          this.boundaries.right = this.x; // Right
+        else if (target.x + target.width <= this.x + this.width)
+          // Left
           this.boundaries.left = target.x + target.width;
       } else if (this.y <= target.y + target.height) {
+        this.boundaries.left = 0;
+        this.boundaries.right = Game.canvas.width;
         this.boundaries.bottom = target.y - this.height;
         this.groundEdgeL = target.x;
         this.groundEdgeR = target.x + target.width;

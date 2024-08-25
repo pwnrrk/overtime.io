@@ -39,7 +39,7 @@ export class Game extends Engine {
     });
     Game.collision = new Collision([Game.player]);
     Game.level = new Practice(this.context);
-    Game.engines.push(Game.level, Game.player, Game.collision);
+    Game.engines.push(Game.level, Game.collision, Game.player);
   }
 
   update(): void {

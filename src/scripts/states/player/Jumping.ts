@@ -15,10 +15,11 @@ export class Jumping extends State {
     this.player.frameX = 0;
     this.player.maxFrame = -1;
     if (this.player.onGround()) {
-      this.player.vy -= this.jumpPower;
+      this.player.boundaries.top = 0;
       this.player.boundaries.right = Game.canvas.width - this.player.width;
       this.player.boundaries.bottom = Game.canvas.height - this.player.height;
       this.player.boundaries.left = 0;
+      this.player.vy -= this.jumpPower;
     }
   }
   handleInput(): void {
