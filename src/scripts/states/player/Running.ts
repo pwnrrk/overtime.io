@@ -16,9 +16,9 @@ export class Running extends State {
   handleInput(keys: string[]): void {
     this.player.model.src =
       this.player.faceDirection === "right" ? playerRun : playerRunBackward;
-    if (!keys.includes("a") && !keys.includes("d")) {
+    if (!keys.includes("a") && !keys.includes("d") && !keys.includes("ArrowRight") && !keys.includes("ArrowLeft")) {
       this.player.setState(states.IDLING);
-    } else if (keys.includes("w")) {
+    } else if (keys.includes("w") || keys.includes("ArrowUp") || keys.includes(" ")) {
       this.player.setState(states.JUMPING);
     }
   }

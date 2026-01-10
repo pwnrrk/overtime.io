@@ -16,9 +16,9 @@ export class Idling extends State {
   handleInput(keys: string[]): void {
     this.player.model.src =
       this.player.faceDirection === "right" ? playerIdle : playerIdleBackward;
-    if (keys.includes("d") || keys.includes("a")) {
+    if (keys.includes("d") || keys.includes("a") || keys.includes("ArrowRight") || keys.includes("ArrowLeft")) {
       this.player.setState(states.RUNNING);
-    } else if (keys.includes("w")) {
+    } else if (keys.includes("w") || keys.includes(" ") || keys.includes("ArrowUp")) {
       this.player.setState(states.JUMPING);
     }
   }

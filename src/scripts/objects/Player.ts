@@ -69,10 +69,10 @@ export class Player extends GameObject {
 
   update(context: CanvasRenderingContext2D): void {
     this.currentState.handleInput(Input.keys);
-    if (Input.keys.includes("d")) {
+    if (Input.keys.includes("d") || Input.keys.includes("ArrowRight")) {
       this.faceDirection = "right";
       this.speed = this.baseSpeed;
-    } else if (Input.keys.includes("a")) {
+    } else if (Input.keys.includes("a") || Input.keys.includes("ArrowLeft")) {
       this.faceDirection = "left";
       this.speed = -this.baseSpeed;
     } else {
