@@ -37,8 +37,8 @@ export function useEngine() {
     toggleCollisionBox() {
       Collision.turnOnBox = !Collision.turnOnBox;
     },
-    respawn() {
-      Game.respawn();
+    reSpawn() {
+      Game.reSpawn();
     },
   };
 }

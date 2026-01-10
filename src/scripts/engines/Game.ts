@@ -59,7 +59,7 @@ export class Game extends Engine {
     this.context.beginPath();
   }
 
-  static respawn() {
+  static reSpawn() {
     Game.player.x = 0;
     Game.player.y = Game.canvas.height * 0.5;
     Game.player.boundaries = {
