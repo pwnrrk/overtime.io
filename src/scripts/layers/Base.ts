@@ -7,11 +7,7 @@ export class Base extends Layer {
   name = "Background";
   turnOnCollision: boolean = false;
   pattern: CanvasPattern | null = null;
-  image: HTMLImageElement = new Image();
-  width: number = 0;
-  height: number = 0;
-  x: number = 0;
-  y: number = 0;
+  image: HTMLImageElement;
 
   constructor(
     context: CanvasRenderingContext2D,
@@ -19,16 +15,18 @@ export class Base extends Layer {
     height: number
   ) {
     super();
+    this.image = new Image();
     this.image.src = background;
-    this.image.onload = () => {
-      this.pattern = context.createPattern(
-        this.image,
-        "repeat"
-      ) as CanvasPattern;
-    };
     this.width = width;
     this.height = height;
     this.id = getId("Background");
+    this.initializePattern(context);
+  }
+
+  private initializePattern(context: CanvasRenderingContext2D): void {
+    this.image.onload = () => {
+      this.pattern = this.createPattern(context, this.image);
+    };
   }
 
   update(context: CanvasRenderingContext2D): void {
@@ -36,10 +34,7 @@ export class Base extends Layer {
   }
 
   draw(context: CanvasRenderingContext2D): void {
-    if (this.pattern) {
-      context.fillStyle = this.pattern;
-      context.fillRect(0, 0, this.width, this.height);
-    }
+    this.drawPattern(context, this.pattern);
   }
 
   onCollision(): void {}

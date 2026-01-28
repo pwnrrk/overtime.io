@@ -4,41 +4,42 @@ import { Input } from "./scripts/misc/Input";
 import { Collision } from "./scripts/misc/Collision";
 
 export function useEngine() {
-  const [isRunning, setRunning] = useState(false);
-  const [gameInstance, setGameInstance] = useState<Game>();
+    const [isRunning, setRunning] = useState(false);
+    const [gameInstance, setGameInstance] = useState<Game>();
 
-  useEffect(() => {
-    new Input();
-  }, []);
+    useEffect(() => {
+        new Input();
+    }, []);
 
-  const start = useCallback(
-    (canvas: HTMLCanvasElement | null) => {
-      {
-        if (gameInstance) return;
-        if (!canvas) throw new Error("No canvas to render.");
-        const game = new Game(canvas);
-        setGameInstance(game);
-        setRunning(true);
-        function animate(timestamp: number) {
-          Game.deltaTime = timestamp - Game.lastTime;
-          Game.lastTime = timestamp;
-          game.update();
-          requestAnimationFrame(animate);
-        }
-        requestAnimationFrame(animate);
-      }
-    },
-    [gameInstance]
-  );
+    const start = useCallback(
+        (canvas: HTMLCanvasElement | null) => {
+            if (gameInstance) return;
+            if (!canvas) throw new Error("No canvas to render.");
 
-  return {
-    start,
-    isRunning,
-    toggleCollisionBox() {
-      Collision.turnOnBox = !Collision.turnOnBox;
-    },
-    reSpawn() {
-      Game.reSpawn();
-    },
-  };
+            const game = new Game({ canvas });
+            setGameInstance(game);
+            setRunning(true);
+
+            function animate(timestamp: number) {
+                const state = Game.getState();
+                Game.updateGameState(timestamp, timestamp - state.lastTime);
+                game.update();
+                requestAnimationFrame(animate);
+            }
+
+            requestAnimationFrame(animate);
+        },
+        [gameInstance]
+    );
+
+    return {
+        start,
+        isRunning,
+        toggleCollisionBox() {
+            Collision.turnOnBox = !Collision.turnOnBox;
+        },
+        respawn() {
+            Game.respawn();
+        },
+    };
 }

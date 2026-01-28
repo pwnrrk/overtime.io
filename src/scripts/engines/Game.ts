@@ -4,54 +4,111 @@ import { Collision } from "../misc/Collision";
 import { Player } from "../objects/Player";
 import { Engine } from "./Engine";
 
+interface GameConfig {
+  canvas: HTMLCanvasElement;
+  fps?: number;
+  width?: number;
+  height?: number;
+}
+
+interface GameState {
+  lastTime: number;
+  deltaTime: number;
+  frameTimer: number;
+}
+
 export class Game extends Engine {
-  static lastTime: number = 0;
-  static deltaTime: number = 0;
-  static FPS: number = 24;
-  static frameInterval = 1000 / Game.FPS;
-  static frameTimer: number = 0;
+  private static readonly DEFAULT_FPS = 24;
+  private static readonly ASPECT = 16 / 9;
+  private static readonly INITIAL_PLAYER_Y_RATIO = 0.5;
+
+  private static state: GameState = {
+    lastTime: 0,
+    deltaTime: 0,
+    frameTimer: 0,
+  };
+
   static collision: Collision;
   static canvas: HTMLCanvasElement;
   static player: Player;
   static engines: Engine[] = [];
   static level: Level;
-  context: CanvasRenderingContext2D;
-  id: string;
 
-  constructor(canvas: HTMLCanvasElement) {
+  private context: CanvasRenderingContext2D;
+
+  constructor(config: GameConfig) {
     super();
-    Game.canvas = canvas;
-    Game.canvas.width = 1920;
-    Game.canvas.height = 1080;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+
+    let newWidth = w;
+    let newHeight = w / Game.ASPECT;
+
+    if (newHeight > h) {
+      newHeight = h;
+      newWidth = h * Game.ASPECT;
+    }
+
+    const { canvas, width = newWidth, height = newHeight } = config;
+
+    this.initializeCanvas(canvas, width, height);
     this.context = canvas.getContext("2d") as CanvasRenderingContext2D;
-    this.id = Math.round(Date.now() * Math.random()).toString(16);
+
+    this.initializeGameEntities(width, height);
+  }
+
+  private initializeCanvas(
+    canvas: HTMLCanvasElement,
+    width: number,
+    height: number,
+  ): void {
+    Game.canvas = canvas;
+    Game.canvas.width = width;
+    Game.canvas.height = height;
+  }
+
+  private initializeGameEntities(width: number, height: number): void {
+    const centerY = height * Game.INITIAL_PLAYER_Y_RATIO;
+    const boundaries = { top: 0, left: 0, right: width, bottom: height };
+
     Game.player = new Player({
-      position: {
-        x: 0,
-        y: Game.canvas.height * 0.5,
-      },
-      boundaries: {
-        top: 0,
-        left: 0,
-        right: Game.canvas.width,
-        bottom: Game.canvas.height,
-      },
+      position: { x: 0, y: centerY },
+      boundaries,
     });
+
     Game.collision = new Collision([Game.player]);
     Game.level = new Practice(this.context);
-    Game.engines.push(Game.level, Game.collision, Game.player);
+    Game.engines.push(
+      Game.level,
+      ...Game.level.collectables,
+      ...Game.level.obstacles,
+      Game.collision,
+      Game.player,
+    );
   }
 
   update(): void {
-    if (Game.frameTimer > Game.frameInterval) {
-      Game.frameTimer = 0;
-    } else {
-      Game.frameTimer += Game.deltaTime;
-    }
+    this.updateFrameTimer();
     this.draw();
+    this.updateEngines();
+  }
+
+  private updateFrameTimer(): void {
+    if (Game.state.frameTimer > this.getFrameInterval()) {
+      Game.state.frameTimer = 0;
+    } else {
+      Game.state.frameTimer += Game.state.deltaTime;
+    }
+  }
+
+  private updateEngines(): void {
     for (const engine of Game.engines) {
       engine.update(this.context);
     }
+  }
+
+  private getFrameInterval(): number {
+    return 1000 / Game.DEFAULT_FPS;
   }
 
   draw(): void {
@@ -59,14 +116,26 @@ export class Game extends Engine {
     this.context.beginPath();
   }
 
-  static reSpawn() {
-    Game.player.x = 0;
-    Game.player.y = Game.canvas.height * 0.5;
-    Game.player.boundaries = {
+  static respawn(): void {
+    const centerY = Game.canvas.height * Game.INITIAL_PLAYER_Y_RATIO;
+    const boundaries = {
       top: 0,
       left: 0,
       right: Game.canvas.width,
       bottom: Game.canvas.height,
     };
+
+    Game.player.x = 0;
+    Game.player.y = centerY;
+    Game.player.boundaries = boundaries;
+  }
+
+  static getState(): Readonly<GameState> {
+    return { ...Game.state };
+  }
+
+  static updateGameState(lastTime: number, deltaTime: number): void {
+    Game.state.lastTime = lastTime;
+    Game.state.deltaTime = deltaTime;
   }
 }

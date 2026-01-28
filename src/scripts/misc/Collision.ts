@@ -3,8 +3,8 @@ import { GameObject } from "../objects/GameObject";
 
 export class Collision extends Engine {
   private objects: GameObject[];
-  private margin: number = 12;
-  static turnOnBox: boolean = true;
+  private margin: number = 0;
+  static turnOnBox: boolean = false;
 
   constructor(objects: GameObject[]) {
     super();
@@ -22,10 +22,10 @@ export class Collision extends Engine {
           if (!cursor.turnOnCollision) return false;
           if (cursor.name === target.name) return false;
           if (
-            target.x + target.width >= cursor.x - this.margin &&
-            target.x <= cursor.x + cursor.width + this.margin &&
-            target.y + target.height >= cursor.y - this.margin &&
-            target.y <= cursor.y + cursor.height + this.margin
+            target.x + target.width + this.margin >= cursor.x - this.margin &&
+            target.x - this.margin <= cursor.x + cursor.width + this.margin &&
+            target.y + target.height + this.margin >= cursor.y - this.margin &&
+            target.y - this.margin <= cursor.y + cursor.height + this.margin
           ) {
             return true;
           }

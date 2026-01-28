@@ -4,14 +4,10 @@ import { getId } from "../misc/Id";
 
 export class FloorMatt extends Layer {
   id: string;
-  name = "FloorMatt";
+  name = "FloorMat";
   turnOnCollision: boolean = false;
   pattern: CanvasPattern | null = null;
   image: HTMLImageElement;
-  width: number = 16;
-  height: number = 16;
-  x: number = 0;
-  y: number;
 
   constructor(
     context: CanvasRenderingContext2D,
@@ -27,13 +23,14 @@ export class FloorMatt extends Layer {
     this.y = y;
     this.width = width;
     this.height = height;
+    this.id = getId("FloorMat");
+    this.initializePattern(context);
+  }
+
+  private initializePattern(context: CanvasRenderingContext2D): void {
     this.image.onload = () => {
-      this.pattern = context.createPattern(
-        this.image,
-        "repeat"
-      ) as CanvasPattern;
+      this.pattern = this.createPattern(context, this.image);
     };
-    this.id = getId("FloorMatt");
   }
 
   update(context: CanvasRenderingContext2D): void {
@@ -41,10 +38,7 @@ export class FloorMatt extends Layer {
   }
 
   draw(context: CanvasRenderingContext2D): void {
-    if (this.pattern) {
-      context.fillStyle = this.pattern;
-      context.fillRect(this.x, this.y, this.width, this.height);
-    }
+    this.drawPattern(context, this.pattern);
   }
 
   onCollision(): void {}
