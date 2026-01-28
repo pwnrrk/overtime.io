@@ -1,3 +1,4 @@
+import { getId } from "../misc/Id";
 import { GameObject } from "./GameObject";
 
 interface CheckpointState {
@@ -22,14 +23,12 @@ export class Checkpoint extends GameObject {
   state: CheckpointState;
 
   constructor(
-    id: string,
     x: number,
     y: number,
     checkpointType: "flag" | "pointer" | "end" = "flag",
-    model?: HTMLImageElement
   ) {
     super();
-    this.id = id;
+    this.id = getId("Checkpoint");
     this.x = x;
     this.y = y;
     this.checkpointType = checkpointType;
@@ -37,9 +36,7 @@ export class Checkpoint extends GameObject {
       type: checkpointType,
       activated: false,
     };
-    if (model) {
-      this.model = model;
-    }
+    this.model = new Image();
   }
 
   onCollision(target: GameObject): void {
@@ -64,12 +61,13 @@ export class Checkpoint extends GameObject {
     return this.checkpointType === "end" && this.state.activated;
   }
 
-  update(context: CanvasRenderingContext2D, ...params: unknown[]): void {
+  update(context: CanvasRenderingContext2D): void {
     // Update checkpoint state each frame
     // Can be extended for flag waving animation, etc.
+    this.draw(context);
   }
 
-  draw(context: CanvasRenderingContext2D, ...params: unknown[]): void {
+  draw(context: CanvasRenderingContext2D): void {
     // Draw the checkpoint at its current position
     if (this.model) {
       context.drawImage(this.model, this.x, this.y, this.width, this.height);
