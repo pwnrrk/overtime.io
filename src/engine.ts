@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Game } from "./scripts/engines/Game";
+import { FixedStep } from "./scripts/engines/FixedStep";
 import { Input } from "./scripts/misc/Input";
 import { Collision } from "./scripts/misc/Collision";
 
@@ -20,10 +21,15 @@ export function useEngine() {
             setGameInstance(game);
             setRunning(true);
 
+            // Advance the game at a fixed rate so speed does not depend on the
+            // display's refresh rate.
+            const loop = new FixedStep(Game.STEP_MS);
+
             function animate(timestamp: number) {
-                const state = Game.getState();
-                Game.updateGameState(timestamp, timestamp - state.lastTime);
-                game.update();
+                loop.advance(timestamp, () => {
+                    Game.updateGameState(timestamp, Game.STEP_MS);
+                    game.update();
+                });
                 requestAnimationFrame(animate);
             }
 
