@@ -18,8 +18,17 @@ interface GameState {
 }
 
 export class Game extends Engine {
+  // The simulation runs at a fixed rate. Speeds and gravity in Player are
+  // tuned per tick at 60 ticks per second.
+  static readonly TICK_RATE = 60;
+  static readonly STEP_MS = 1000 / Game.TICK_RATE;
+
+  // The world is always this size in canvas pixels, whatever the window size.
+  // The canvas is scaled to fit the window with CSS (see App.css).
+  static readonly LOGICAL_WIDTH = 1920;
+  static readonly LOGICAL_HEIGHT = 1080;
+
   private static readonly DEFAULT_FPS = 24;
-  private static readonly ASPECT = 16 / 9;
   private static readonly INITIAL_PLAYER_Y_RATIO = 0.5;
 
   private static state: GameState = {
@@ -38,18 +47,11 @@ export class Game extends Engine {
 
   constructor(config: GameConfig) {
     super();
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-
-    let newWidth = w;
-    let newHeight = w / Game.ASPECT;
-
-    if (newHeight > h) {
-      newHeight = h;
-      newWidth = h * Game.ASPECT;
-    }
-
-    const { canvas, width = newWidth, height = newHeight } = config;
+    const {
+      canvas,
+      width = Game.LOGICAL_WIDTH,
+      height = Game.LOGICAL_HEIGHT,
+    } = config;
 
     this.initializeCanvas(canvas, width, height);
     this.context = canvas.getContext("2d") as CanvasRenderingContext2D;
