@@ -1,50 +1,53 @@
-# React + TypeScript + Vite
+# Overtime.io
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A 2D platformer game built with React, TypeScript and Vite. The game is drawn on an HTML canvas; React only hosts the canvas and a small UI overlay.
 
-Currently, two official plugins are available:
+The project is in an early stage. There is one test level (`Practice`) with a player, ground, gems and boxes.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Getting started
 
-## Expanding the ESLint configuration
+Requires Node.js and npm.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+npm install
+npm run dev
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+Other scripts:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+| Command           | What it does                                   |
+| ----------------- | ---------------------------------------------- |
+| `npm run dev`     | Start the Vite dev server                      |
+| `npm run build`   | Type-check with `tsc -b`, then build with Vite |
+| `npm run lint`    | Run ESLint                                     |
+| `npm run preview` | Serve the production build locally             |
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+The app is configured with the base path `/overtime.io` (see `vite.config.ts`).
+
+## Controls
+
+| Action | Keys                              |
+| ------ | --------------------------------- |
+| Move   | `A` / `D` or `ArrowLeft` / `ArrowRight` |
+| Jump   | `W`, `Space` or `ArrowUp`         |
+
+The overlay has two debug buttons: **Re-spawn** and **Toggle Collision Box**.
+
+## Project structure
+
 ```
+src/
+  App.tsx, engine.ts        React entry and the `useEngine` hook (starts the game loop)
+  scripts/
+    engines/                Game loop and the base Engine class
+    levels/                 Level base class and the Practice level
+    layers/                 Background and ground layers
+    objects/                Player, Box, Gem, Checkpoint
+    states/player/          Player state machine (idle, run, jump, fall)
+    misc/                   Collision, input and helpers
+  assets/                   Sprites, tiles and Tiled maps
+```
+
+## Assets
+
+Art assets come from a free Craftpix pack. `src/assets/License.txt` links to its license terms.
