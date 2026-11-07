@@ -34,7 +34,8 @@ export class Box extends GameObject {
     this.y = y;
     this.boxType = boxType;
     this.model = new Image();
-    this.model.src = Box.BOX_TYPES[this.boxType];
+    // boxType is 1-based (1 to 3); BOX_TYPES is a 0-based array.
+    this.model.src = Box.BOX_TYPES[this.boxType - 1];
     Game.collision.register(this);
   }
 
@@ -80,7 +81,6 @@ export class Box extends GameObject {
   draw(context: CanvasRenderingContext2D): void {
     // Draw the box at its current position
     if (this.model) {
-      console.log("Drawbox");
       context.drawImage(this.model, this.x, this.y, this.width, this.height);
     }
   }

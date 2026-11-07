@@ -42,7 +42,8 @@ export class Gem extends GameObject {
     this.gemType = gemType;
     this.value = value;
     this.model = new Image();
-    this.model.src = Gem.GEM_TYPES[this.gemType];
+    // gemType is 1-based (1 to 6); GEM_TYPES is a 0-based array.
+    this.model.src = Gem.GEM_TYPES[this.gemType - 1];
     Game.collision.register(this)
   }
 
