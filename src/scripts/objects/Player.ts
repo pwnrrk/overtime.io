@@ -75,6 +75,19 @@ export class Player extends GameObject {
     this.y = position.y - this.height;
   }
 
+  /**
+   * Put the player back at a spawn point with a clean slate: fresh
+   * boundaries (shrunk by the player's size, same as on construction),
+   * no leftover vertical velocity, and the idle state.
+   */
+  respawn(position: { x: number; y: number }, boundaries: Boundaries): void {
+    this.initializeBoundaries(boundaries);
+    this.initializePosition(position);
+    this.physics.vy = 0;
+    this.speed = 0;
+    this.setState(states.IDLING);
+  }
+
   private createStates(): State[] {
     return [
       new Idling(this),

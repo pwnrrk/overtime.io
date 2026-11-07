@@ -125,9 +125,7 @@ export class Game extends Engine {
       bottom: Game.canvas.height,
     };
 
-    Game.player.x = 0;
-    Game.player.y = centerY;
-    Game.player.boundaries = boundaries;
+    Game.player.respawn({ x: 0, y: centerY }, boundaries);
   }
 
   static getState(): Readonly<GameState> {
